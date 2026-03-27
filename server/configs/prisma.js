@@ -13,10 +13,15 @@ neonConfig.webSocketConstructor = ws;
 // declare global 2
 // var prisma: PrismaClient | undefined 
 
-const connectionString = '${iprocess.env.DATABASE_URL}';  
+const connectionString = process.env.DATABASE_URL;  
  
 const adapter = new PrismaNeon({ connectionString });  
-const prisma = global.prisma || new PrismaClient(adapter);  
+
+const prisma =
+  global.prisma ||
+  new PrismaClient({
+    adapter: adapter,
+  });
 
 if (process.env.NODE_ENV === 'development') global.prisma = prisma;  
 

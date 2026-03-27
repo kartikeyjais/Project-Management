@@ -6,47 +6,52 @@ export const inngest = new Inngest({ id: "Project-Management"});
 
 // Inngest function to save user data to a database 
 const syncUserCreation = inngest.createFunction( 
-   {id: 'sync-user-with-clerk'}, 
-   {event: 'clerk/user.created'}, 
-
+   {
+    id: "sync-user-with-clerk",
+    triggers: [{ event: "clerk/user.created"}],
+  },
    async ({ event })=>{  
-       const {data} = event 
+       const {data} = event; 
        await prisma.user.create({  
-          date:{ 
+          data:{ 
                id: data.id, 
-               email: data?.email_addresses[0]?.email_addres, 
+               email: data?.email_addresses[0]?.email_address, 
                name: data?.first_name + " " + data?.last_name,  
                image: data?.image_url,   
 
-          }  
-       })  
+          }, 
+       });  
 
    } 
 
-) 
+); 
 
 // Inngest Function to delete user from database
     
    const syncUserDeletion = inngest.createFunction( 
-   {id: 'delete-user-with-clerk'}, 
-   {event: 'clerk/user.deleted'}, 
+    {
+    id: "delete-user-with-clerk",
+    triggers: [{ event: "clerk/user.updated" }],
+  }, 
 
    async ({ event })=>{  
-       const {data} = event  
+       const {data} = event;
        await prisma.user.delete({   
           where:{  
                id: data.id, 
                  
-          }  
-       })  
+          } , 
+       });  
    } 
-)
+);
 
 // Innegest Function to update user data in database
  
  const syncUserUpdation = inngest.createFunction( 
-   {id: 'update-user-with-clerk'}, 
-   {event: 'clerk/user.updated'}, 
+  {
+    id: "update-user-with-clerk",
+    triggers: [{ event: "clerk/user.updated" }],
+  }, 
    
    async ({ event })=>{  
        const {data} = event 
@@ -58,15 +63,15 @@ const syncUserCreation = inngest.createFunction(
                email: data?.email_addresses[0]?.email_addres, 
                name: data?.first_name + " " + data?.last_name,   
                image: data?.image_url,   
-          }  
-       })  
+          },
+       }) ; 
    } 
-) 
+);
 
 // Create an empty array where we'll export future Inngest functions 
 export const functions = [ 
    syncUserCreation, 
    syncUserDeletion, 
-   syncUserUpdation 
+   syncUserUpdation, 
 ]; 
  
